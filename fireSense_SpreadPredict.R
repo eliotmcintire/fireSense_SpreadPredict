@@ -17,17 +17,8 @@ defineModule(sim, list(
                   "ggplot2", "viridis",
                   "PredictiveEcology/fireSenseUtils@development"),
   parameters = bindrows(
-    defineParameter(name = ".runInitialTime", class = "numeric", default = start(sim),
-                    desc = "when to start this module? By default, the start time of the simulation."),
-    defineParameter(name = ".runInterval", class = "numeric", default = 1,
-                    desc = paste("optional. Interval between two runs of this module, expressed in units of",
-                                 "simulation time.Defaults to 1 year.")),
-    defineParameter(name = ".saveInitialTime", class = "numeric", default = NA,
-                    desc = "optional. When to start saving output to a file."),
-    defineParameter(name = ".saveInterval", class = "numeric", default = NA,
-                    desc = "optional. Interval between save events."),
     defineParameter(name = "climCol", class = "character", default = "MDC", min = NA, max = NA,
-                    desc = "the name of the climate covariate in sim$fireSense_spreadCovariates"),
+                    desc = "the name of the climate covariate in `sim$fireSense_spreadCovariates`"),
     defineParameter(name = "coefToUse", class = "character", default = "meanCoef",
                     desc = paste("Which coefficient to use to predict?",
                                  "The best coefficient (bestCoef) from DEOPtim or ",
@@ -38,6 +29,15 @@ defineModule(sim, list(
                     desc = paste("a named list, where the name of the list must be a covariate in the data.table.",
                                  "Covariates matching the values in each list element will be set to 0.",
                                  "List content should be a grep regex.")),
+    defineParameter(name = ".runInitialTime", class = "numeric", default = start(sim),
+                    desc = "when to start this module? By default, the start time of the simulation."),
+    defineParameter(name = ".runInterval", class = "numeric", default = 1,
+                    desc = paste("optional. Interval between two runs of this module, expressed in units of",
+                                 "simulation time.Defaults to 1 year.")),
+    defineParameter(name = ".saveInitialTime", class = "numeric", default = NA,
+                    desc = "optional. When to start saving output to a file."),
+    defineParameter(name = ".saveInterval", class = "numeric", default = NA,
+                    desc = "optional. Interval between save events."),
     defineParameter(".useCache", "logical", FALSE, NA, NA,
                     paste("Should this entire module be run with caching activated?",
                           "This is generally intended for data-type modules, where stochasticity and time are not relevant"))
@@ -161,7 +161,7 @@ spreadPredictRun <- function(sim) {
   colsToUse <- setdiff(names(fireSense_SpreadCovariates), "pixelID")
   parsModel <- length(colsToUse)
 
-  
+
   par <- sim$fireSense_SpreadFitted[[P(sim)$coefToUse]]
   mat <- as.matrix(fireSense_SpreadCovariates[, ..colsToUse])/1000 # Divide by 1000 for the model prediction
 
